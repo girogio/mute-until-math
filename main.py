@@ -5,47 +5,20 @@ from discord import app_commands
 from env import TOKEN
 import logging
 
+from init import load_opus_lib, intents
+
 from time_manager import read_time_left, write_time_left
 from mathproblems import generate_problem_answer
 
-log_handler = logging.StreamHandler()
-
-OPUS_LIBS = [
-    "/usr/local/lib/libopus.0.dylib",
-    "libopus.so.0",
-    "libopus.0.dylib",
-]
-
-
-def load_opus_lib(opus_libs=OPUS_LIBS):
-    if discord.opus.is_loaded():
-        return True
-
-    for opus_lib in opus_libs:
-        try:
-            discord.opus.load_opus(opus_lib)
-            return
-        except OSError:
-            pass
-
-        raise RuntimeError(
-            "Could not load an opus lib. Tried %s" % (", ".join(opus_libs))
-        )
-
-
-load_opus_lib()
-
-intents = discord.Intents.default()
-intents.voice_states, intents.guild_messages, intents.guilds = True, True, True
-intents.message_content = True
-
-client = discord.Client(intents=intents)
+client = discord.Client(intents=intents())
 tree = app_commands.CommandTree(client)
 
 DEBUG = True
 USER = 341638922809507841 if DEBUG else 547114856252178433
 CHANNEL = 1312364194582233132 if DEBUG else 1253267777830260858
 SERVER = 1312364194036715560 if DEBUG else 1205191226354303056
+
+load_opus_lib()
 
 is_connected: bool = False
 
@@ -232,4 +205,4 @@ async def givemetime(interaction):
     )
 
 
-client.run(TOKEN, log_handler=log_handler)
+client.run(TOKEN)
