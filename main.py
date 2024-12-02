@@ -5,7 +5,7 @@ from discord import app_commands
 from env import TOKEN
 
 from time_manager import read_time_left, write_time_left
-from mathproblems import get_question_and_answer
+from mathproblems import generate_problem_answer
 
 
 intents = discord.Intents.default()
@@ -95,7 +95,7 @@ async def givemetime(interaction):
         else:
             return
 
-        question, answer = get_question_and_answer(difficulty)
+        question, answer = generate_problem_answer(difficulty)
 
         timeouts = {
             "easy": 10,
@@ -139,7 +139,7 @@ async def givemetime(interaction):
             return
 
         if (
-            message.content == str(round(answer, 2))
+            int(message.content) == round(answer, 2)
             and not message.author.bot
             and not answer is None
         ):

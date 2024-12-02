@@ -8,7 +8,7 @@ url = "https://e1kf0882p7.execute-api.us-east-1.amazonaws.com/default/latex2imag
 
 def pngify(q: str) -> str:
     q = f"\\color{{white}}{{{q}}}"
-    data = {"latexInput": q, "outputScale": "125%", "outputFormat": "PNG"}
+    data = {"latexInput": q, "outputScale": "150%", "outputFormat": "PNG"}
     response = requests.post(url, json=data)
     return response.json()["imageUrl"]
 
@@ -21,7 +21,7 @@ def term(coeff, var):
     return f"{coeff}{var}"
 
 
-def gen_easy_question() -> tuple[str, int]:
+def generate_easy_problem() -> tuple[str, int]:
     a = randint(2, 20)
     b = randint(2, 20)
     c = randint(2, 20)
@@ -48,7 +48,7 @@ def gen_matrix():
             return matrix
 
 
-def gen_matrix_question() -> tuple[str, int]:
+def generate_hard_problem() -> tuple[str, int]:
     A = gen_matrix()
     v2 = np.random.randint(1, 10, (3, 1))
     Ainv = np.linalg.inv(A)
@@ -59,14 +59,14 @@ $ {term(A[0][0], 'x')} + {term(A[0][1], 'y')} + {term(A[0][2], 'z')} = {v2[0][0]
 $ {term(A[1][0], 'x')} + {term(A[1][1], 'y')} + {term(A[1][2], 'z')} = {v2[1][0]} $ \\\\
 $ {term(A[2][0], 'x')} + {term(A[2][1], 'y')} + {term(A[2][2], 'z')} = {v2[2][0]}$\\\\
     """
-    # get the sum in one number
+
     a = v1[0] + v1[1] + v1[2]
     a = a[0]
 
-    return (q, a)
+    return q, a
 
 
-def gen_hard_question() -> tuple[str, int]:
+def generate_medium_problem() -> tuple[str, int]:
     a = randint(1, 20)
     b = randint(1, 20)
     c = randint(1, 10)
@@ -89,17 +89,17 @@ impossible_qs = [
 ]
 
 
-def get_question_and_answer(
+def generate_problem_answer(
     diff: Literal["easy", "medium", "hard", "impossible"]
 ) -> tuple[str, int]:
     if diff == "easy":
-        q, a = gen_easy_question()
+        q, a = generate_easy_problem()
         return pngify(q), a
     elif diff == "medium":
-        q, a = gen_matrix_question()
+        q, a = generate_medium_problem()
         return pngify(q), a
     elif diff == "hard":
-        q, a = gen_hard_question()
+        q, a = generate_hard_problem()
         return pngify(q), a
     elif diff == "impossible":
         index = randint(0, len(impossible_qs) - 1)
